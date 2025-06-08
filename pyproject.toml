@@ -2,7 +2,8 @@
      name = "mini-tournament-system"
      version = "0.1.0"
      description = "Mini tournament system API"
-     authors = ["Your Name <your.email@example.com>"]
+     authors = ["davronovtatu@gmail.com"]
+
 
      [tool.poetry.dependencies]
      python = "^3.11"
