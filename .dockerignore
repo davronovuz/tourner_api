@@ -1,0 +1,31 @@
+# Node.js project uchun umumiy ignore ro'yxati
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Git fayllari
+.git
+.gitignore
+
+# OS va IDE fayllari
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# Mahalliy konfiguratsiya va kesh fayllar
+.env
+*.env
+*.local
+.cache
+
+# Docker uchun ignore qilinishi kerak bo'lgan fayllar
+Dockerfile.*
+.dockerignore
+docker-compose.*
+
+# Test va log fayllar
+coverage
+*.log
+*.out
+*.test
