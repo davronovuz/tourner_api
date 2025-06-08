@@ -9,6 +9,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from typing import List
 
+
 class TournamentRepository:
     """Repository for managing tournament and player data."""
 
@@ -18,10 +19,12 @@ class TournamentRepository:
 
     async def create_tournament(self, tournament: TournamentCreate) -> Tournament:
         """Create a new tournament with preloaded players."""
-        db_tournament = Tournament(**tournament.dict())
+        db_tournament = Tournament(**tournament.model_dump())
         self.db.add(db_tournament)
         await self.db.commit()
-        await self.db.refresh(db_tournament, {"players": selectinload(Tournament.players)})
+        await self.db.refresh(
+            db_tournament, {"players": selectinload(Tournament.players)}
+        )
         return db_tournament
 
     async def register_player(self, tournament_id: int, player: PlayerCreate):
@@ -29,7 +32,9 @@ class TournamentRepository:
         tournament = await self.db.get(Tournament, tournament_id)
         if not tournament:
             raise HTTPException(status_code=404, detail="Tournament not found")
-        current_players = await self.db.execute(select(Player).filter_by(tournament_id=tournament_id))
+        current_players = await self.db.execute(
+            select(Player).filter_by(tournament_id=tournament_id)
+        )
         current_players = current_players.scalars().all()
         if len(current_players) >= tournament.max_players:
             raise HTTPException(status_code=400, detail="Tournament is full")
@@ -38,7 +43,9 @@ class TournamentRepository:
         )
         if existing_player.scalar_one_or_none():
             raise HTTPException(status_code=400, detail="Player already registered")
-        db_player = Player(name=player.name, email=player.email, tournament_id=tournament_id)
+        db_player = Player(
+            name=player.name, email=player.email, tournament_id=tournament_id
+        )
         self.db.add(db_player)
         try:
             await self.db.commit()
@@ -46,9 +53,13 @@ class TournamentRepository:
             return db_player
         except IntegrityError:
             await self.db.rollback()
-            raise HTTPException(status_code=400, detail="Email already exists") from None
+            raise HTTPException(
+                status_code=400, detail="Email already exists"
+            ) from None
 
     async def get_players(self, tournament_id: int) -> List[Player]:
         """Retrieve all players for a tournament."""
-        result = await self.db.execute(select(Player).filter_by(tournament_id=tournament_id))
+        result = await self.db.execute(
+            select(Player).filter_by(tournament_id=tournament_id)
+        )
         return result.scalars().all()

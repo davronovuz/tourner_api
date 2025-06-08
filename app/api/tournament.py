@@ -15,8 +15,11 @@ router = APIRouter()
 
 """API endpoints for tournament management."""
 
+
 @router.post("/tournaments", response_model=TournamentResponse)
-async def create_tournament(tournament: TournamentCreate, db: AsyncSession = Depends(get_db)):
+async def create_tournament(
+    tournament: TournamentCreate, db: AsyncSession = Depends(get_db)
+):
     """Create a new tournament."""
     service = TournamentService(db)
     db_tournament = await service.create_tournament(tournament)
